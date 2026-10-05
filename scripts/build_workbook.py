@@ -13,7 +13,6 @@ from __future__ import annotations
 
 import argparse
 import hashlib
-import uuid
 import zipfile
 from pathlib import Path
 
@@ -105,10 +104,6 @@ def attrs(**kwargs: object) -> str:
 def ds_name(table: str) -> str:
     digest = hashlib.sha1(table.encode()).hexdigest()[:28]
     return f"federated.{digest}"
-
-
-def new_uuid(seed: str) -> str:
-    return "{" + str(uuid.uuid5(uuid.NAMESPACE_URL, seed)).upper() + "}"
 
 
 def read_schema(csv: Path) -> list[tuple[str, str]]:
@@ -245,8 +240,7 @@ def worksheet_xml(name: str, sheet: Sheet, pane: str, rows: str, cols: str) -> s
         f'<worksheet {attrs(name=name)}><table>{view}<style />'
         f'<panes><pane selection-relaxation-option="selection-relaxation-allow">'
         f'<view><breakdown value="auto" /></view>{pane}</pane></panes>'
-        f"<rows>{esc(rows)}</rows><cols>{esc(cols)}</cols></table>"
-        f'<simple-id uuid="{new_uuid(name)}" /></worksheet>'
+        f"<rows>{esc(rows)}</rows><cols>{esc(cols)}</cols></table></worksheet>"
     )
 
 
@@ -318,8 +312,7 @@ def dashboard_xml() -> str:
         + '<zone h="76000" id="6" param="vert" type="layout-flow" w="18000" x="82000" y="24000">'
         + zone(22, 82000, 24000, 18000, 10000, mode="compact", param=PARAM, type="paramctrl")
         + zone(23, 82000, 34000, 18000, 66000, name="Trend", param=legend_field, type="color")
-        + "</zone></zone></zone></zone></zones>"
-        f'<simple-id uuid="{new_uuid(DASHBOARD)}" /></dashboard></dashboards>'
+        + "</zone></zone></zone></zone></zones></dashboard></dashboards>"
     )
 
 
@@ -331,14 +324,13 @@ def windows_xml(sheets: list[str]) -> str:
         '<strip size="31"><card type="title" /></strip></edge></cards>'
     )
     out = "".join(
-        f'<window {attrs(class_="worksheet", name=s)}>{cards}<simple-id uuid="{new_uuid("w" + s)}" /></window>'
+        f'<window {attrs(class_="worksheet", name=s)}>{cards}</window>'
         for s in sheets
     )
     viewpoints = "".join(f'<viewpoint {attrs(name=s)} />' for s in sheets)
     out += (
         f'<window {attrs(class_="dashboard", maximized="true", name=DASHBOARD)}>'
-        f'<viewpoints>{viewpoints}</viewpoints><active id="-1" />'
-        f'<simple-id uuid="{new_uuid("w" + DASHBOARD)}" /></window>'
+        f'<viewpoints>{viewpoints}</viewpoints><active id="-1" /></window>'
     )
     return f'<windows source-height="30">{out}</windows>'
 
