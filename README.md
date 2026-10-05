@@ -49,6 +49,8 @@ Step-by-step Tableau Public guides, written to learn each feature as you use it:
 
 - [Dashboard 1: Course Outcomes Overview](docs/dashboard-1-course-outcomes.md)
 
+To get a packaged workbook with all six CSVs connected and Dashboard 1 already built, run `python scripts/build_workbook.py` after the pipeline and open `data/Online Learning Outcomes.twbx` in Tableau Public.
+
 ## How the SQL is built
 
 | File | What it does | Techniques |
