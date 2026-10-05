@@ -71,7 +71,7 @@ base AS (
         CASE WHEN si.final_result = 'Fail' THEN 1 ELSE 0 END                  AS is_fail,
         r.registration_day,
         r.unregistration_day,
-        r.unregistration_day < 0                                    AS withdrew_before_start,
+        COALESCE(r.unregistration_day < 0, FALSE)                   AS withdrew_before_start,
         COALESCE(cl.total_clicks, 0)                                AS total_clicks,
         COALESCE(cl.early_clicks, 0)                                AS early_clicks,
         COALESCE(cl.pre_start_clicks, 0)                            AS pre_start_clicks,
