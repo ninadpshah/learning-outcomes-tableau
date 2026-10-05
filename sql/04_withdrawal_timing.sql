@@ -1,5 +1,7 @@
 -- When do students withdraw? Weekly and running withdrawal rate per course run.
 -- Uses only withdrawn students who have an unregistration date.
+-- Week -10 also holds earlier withdrawals and the run's last week holds any later
+-- ones, so the cumulative rate ends at the run's full withdrawal count.
 
 CREATE OR REPLACE TABLE agg_withdrawal_timing AS
 WITH runs AS (
@@ -17,7 +19,10 @@ withdrawals AS (
     SELECT
         code_module,
         code_presentation,
-        FLOOR(unregistration_day / 7)::INTEGER AS week,
+        LEAST(
+            GREATEST(FLOOR(unregistration_day / 7)::INTEGER, -10),
+            FLOOR((course_length_days - 1) / 7)::INTEGER
+        ) AS week,
         COUNT(*) AS withdrawals
     FROM fact_enrollment
     WHERE is_withdrawn = 1 AND unregistration_day IS NOT NULL

@@ -1,6 +1,7 @@
 data/raw/
 data/sample/
 data/sample_tableau/
+data/tableau/*.csv
 data/*.duckdb
 data/*.duckdb.wal
 __pycache__/
